@@ -3,14 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <UserSecretsId>8e0fbfc5-aa20-4949-b460-e5685da6ffd1</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\HostedService\OcrHostedService.csproj" />
+    <PackageReference Include="OcrHostedService" Version="1.4.0" />
   </ItemGroup>
 
 </Project>
