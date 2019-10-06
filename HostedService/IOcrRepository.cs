@@ -1,6 +1,6 @@
 ﻿namespace Ocr.HostedService
 {
-    public interface IOcrRepository
+    internal interface IOcrRepository
     {
         string InsertOcr(string ocrName);
     }

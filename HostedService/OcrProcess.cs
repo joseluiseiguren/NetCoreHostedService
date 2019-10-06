@@ -1,9 +1,10 @@
 ﻿
 using Serilog;
+using System.Threading.Tasks;
 
 namespace Ocr.HostedService
 {
-    public class OcrProcess
+    internal class OcrProcess
     {
         private readonly IOcrRepository _ocrReporitory;
         private readonly ILogger _logger;
@@ -15,10 +16,20 @@ namespace Ocr.HostedService
             this._logger = logger;
         }
     
-        public string Process()
+        public async Task<string> Process()
         {
-            this._logger.Warning("XXX");
-            return this._ocrReporitory.InsertOcr("Pepe");
+            return await Task.Run(() => 
+            {
+                while (true)
+                {
+                    this._logger.Warning("XXX");
+                    System.Threading.Thread.Sleep(200);
+                }                
+
+                return this._ocrReporitory.InsertOcr("Pepe");
+            });
+            
+            
         }
 
     }

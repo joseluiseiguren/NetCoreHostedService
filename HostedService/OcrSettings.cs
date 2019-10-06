@@ -7,5 +7,7 @@
         public string FolderToWatch { get; set; }
 
         public string LogFolder { get; set; }
+
+        public string LogLevel { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Ocr.HostedService
 {
-    public class OcrRepository : IOcrRepository
+    internal class OcrRepository : IOcrRepository
     {
         public string InsertOcr(string ocrName)
         {

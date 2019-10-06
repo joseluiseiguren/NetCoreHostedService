@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Serilog;
+using Serilog.Core;
+using Serilog.Events;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -22,28 +24,41 @@ namespace Ocr.HostedService
 
             var servicesCollection = new ServiceCollection();
             servicesCollection.AddTransient<IOcrRepository, OcrRepository>();
-            servicesCollection.AddLogging(configure => configure.AddSerilog(dispose: true));
             this._diProvider = servicesCollection.BuildServiceProvider();
 
             this._logger = new LoggerConfiguration()
-                                    .WriteTo.Console()
-                                    .WriteTo.File(Path.Combine(this._settings.LogFolder, "ocrlog.txt"))
+                                    .WriteTo.File(
+                                                path: Path.Combine(this._settings.LogFolder, "logOcrHostedService.txt"), 
+                                                rollingInterval: RollingInterval.Day, 
+                                                rollOnFileSizeLimit: true, 
+                                                fileSizeLimitBytes: 5242880, //5MB
+                                                levelSwitch: new LoggingLevelSwitch(this.ConvertStringToLogEventLevel(this._settings.LogLevel)))
                                     .CreateLogger();
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
             var process = new OcrProcess(this._diProvider.GetService<IOcrRepository>(), this._logger);
-            var result = process.Process();
+            var result = await process.Process();
 
             Debug.WriteLine(result);
-
-            return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
+        }
+
+        private LogEventLevel ConvertStringToLogEventLevel(string logLevel)
+        {
+            try
+            {
+                return (LogEventLevel)Enum.Parse(typeof(LogEventLevel), logLevel);
+            }
+            catch (Exception)
+            {
+                return LogEventLevel.Debug;
+            }
         }
     }
 }
